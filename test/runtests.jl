@@ -1,6 +1,9 @@
-using DAGSieve
+using DAGSieves
 using Test
+using Graphs: edges, nv, outneighbors
 
-@testset "DAGSieve.jl" begin
+@testset "DAGSieves.jl" begin
     # Write your tests here.
+    include("forward.jl")
+    include("backward.jl")
 end
