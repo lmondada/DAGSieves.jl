@@ -1,0 +1,7 @@
+name = "DAGSieve"
+uuid = "fb6ee709-3ae0-424c-bc22-4b7d895840c4"
+authors = ["Luca Mondada <luca@mondada.net> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1.2"
