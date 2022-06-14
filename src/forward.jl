@@ -6,7 +6,7 @@
 Generate a DAG layer by layer. `inputs` is the first layer, and `steps[i]` are maps from a
 vertex in layer i to a vector of vertices in layer i+1.
 """
-function generate(steps, inputs::Vector{<:AbstractSieveNode})
+function generate(steps, inputs::Vector{<:AbstractSieveNode{T}}) where {T}
     g = SimpleDiGraph(length(inputs))
     nodes::Vector{AbstractSieveNode} = copy(inputs)
     layer = Dict{AbstractSieveNode,Int}(v => i for (i, v) in enumerate(inputs))
@@ -25,7 +25,7 @@ function generate(steps, inputs::Vector{<:AbstractSieveNode})
         end
         layer = newlayer
     end
-    return DAGSieve(g, nodes)
+    return DAGSieve{T}(g, nodes)
 end
 
 """

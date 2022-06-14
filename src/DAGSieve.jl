@@ -1,6 +1,6 @@
-struct DAGSieve
+struct DAGSieve{T}
     graph::SimpleDiGraph
-    nodes::Vector{AbstractSieveNode}
+    nodes::Vector{AbstractSieveNode{T}}
 end
 
 underlying(sieve::DAGSieve) = sieve.graph

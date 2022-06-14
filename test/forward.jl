@@ -1,4 +1,4 @@
-struct TestNode <: AbstractSieveNode
+struct TestNode <: AbstractSieveNode{String}
     id::Int
 end
 

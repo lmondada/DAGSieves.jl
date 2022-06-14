@@ -1,24 +1,16 @@
-struct TemplateNode <: AbstractSieveNode
+struct TemplateNode <: AbstractSieveNode{String}
     id::Int
 end
 
-struct Msg
-    str::String
-end
+Msg = String
 
-function DAGSieves.processid(tn::TestNode, id)
-    return id
-end
-
-function DAGSieves.processmsgs(tn::TestNode, msgs::Vector{Msg})
+function DAGSieves.outmsg(tn::TestNode, msgs::Vector{Msg})
     return Msg("")
 end
 
-function DAGSieves.processid(tn::TemplateNode, id)
-    return id
-end
+DAGSieves.getid(::TestNode, ::Msg) = ""
 
-function DAGSieves.processmsgs(tn::TemplateNode, msgs::Vector{Msg})
+function DAGSieves.outmsg(tn::TemplateNode, msgs::Vector{Msg})
     return Msg("T$(tn.id)")
 end
 
@@ -32,48 +24,48 @@ end
     sieve = generate(fs, inputs)
 
     events = [
-        # (from=0, to=22, id=23, msg=Msg("")),
-        (from=0, to=21, id=23, msg=Msg("")),
-        (from=0, to=20, id=23, msg=Msg("")),
-        (from=0, to=19, id=23, msg=Msg("")),
-        (from=0, to=18, id=23, msg=Msg("")),
-        (from=0, to=17, id=23, msg=Msg("")),
+        # (from=0, to=22, msg=Msg("")),
+        (from=0, to=21, msg=Msg("")),
+        (from=0, to=20, msg=Msg("")),
+        (from=0, to=19, msg=Msg("")),
+        (from=0, to=18, msg=Msg("")),
+        (from=0, to=17, msg=Msg("")),
     ]
 
     it = trickledown(sieve, events)
     @test collect(it) == [Msg("T1")]
 
     events = [
-        (from=0, to=22, id=23, msg=Msg("")),
-        (from=0, to=21, id=23, msg=Msg("")),
-        (from=0, to=20, id=23, msg=Msg("")),
-        (from=0, to=19, id=23, msg=Msg("")),
-        (from=0, to=18, id=23, msg=Msg("")),
-        (from=0, to=17, id=23, msg=Msg("")),
+        (from=0, to=22, msg=Msg("")),
+        (from=0, to=21, msg=Msg("")),
+        (from=0, to=20, msg=Msg("")),
+        (from=0, to=19, msg=Msg("")),
+        (from=0, to=18, msg=Msg("")),
+        (from=0, to=17, msg=Msg("")),
     ]
 
     it = trickledown(sieve, events)
     @test Set(it) == Set(Msg("T$i") for i in 1:3)
 
     events = [
-        (from=0, to=22, id=23, msg=Msg("")),
-        (from=0, to=21, id=23, msg=Msg("")),
-        (from=0, to=20, id=23, msg=Msg("")),
-        (from=0, to=19, id=23, msg=Msg("")),
-        # (from=0, to=18, id=23, msg=Msg("")),
-        (from=0, to=17, id=23, msg=Msg("")),
+        (from=0, to=22, msg=Msg("")),
+        (from=0, to=21, msg=Msg("")),
+        (from=0, to=20, msg=Msg("")),
+        (from=0, to=19, msg=Msg("")),
+        # (from=0, to=18, msg=Msg("")),
+        (from=0, to=17, msg=Msg("")),
     ]
 
     it = trickledown(sieve, events)
     @test isempty(it)
 
     events = [
-        (from=0, to=22, id=23, msg=Msg("")),
-        (from=0, to=21, id=23, msg=Msg("")),
-        # (from=0, to=20, id=23, msg=Msg("")),
-        (from=0, to=19, id=23, msg=Msg("")),
-        (from=0, to=18, id=23, msg=Msg("")),
-        (from=0, to=17, id=23, msg=Msg("")),
+        (from=0, to=22, msg=Msg("")),
+        (from=0, to=21, msg=Msg("")),
+        # (from=0, to=20, msg=Msg("")),
+        (from=0, to=19, msg=Msg("")),
+        (from=0, to=18, msg=Msg("")),
+        (from=0, to=17, msg=Msg("")),
     ]
 
     it = trickledown(sieve, events)
