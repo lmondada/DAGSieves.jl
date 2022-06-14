@@ -1,7 +1,7 @@
 # swipe backward, processing events at the outputs layer by layer until inputs
 
 Event{V} = @NamedTuple {from::Int, to::Int, msg::V}
-Buffer{T,V} = Dict{T,Vector{Union{Nothing,V}}}
+Buffer{T,V} = Dict{T,Vector{Vector{V}}}
 
 """
 Sieve events from outputs to inputs
@@ -87,31 +87,33 @@ function events_to_matches!(state::SieveEventsState{T,V}, graph) where {T,V}
         for msg in msgs
             id = getid(currnode, msg)
             if !(id in keys(buffer))
-                buffer[id] = fill(nothing, nout)
+                buffer[id] = [[] for _ in 1:nout]
             end
 
-            if isnothing(buffer[id][fromind])
-                buffer[id][fromind] = msg
-            elseif buffer[id][fromind] != msg
-                error("conflicting messages!")
-            end
+            push!(buffer[id][fromind], msg)
 
-            if !any(isnothing, buffer[id])
-                allmsgs = convert(Vector{V}, buffer[id])
-                newmsg = outmsg(currnode, allmsgs)
-
-                if isempty(inneighbors(graph, to))
-                    # we found a match!
-                    enqueue!(state.matches, newmsg)
-                else
-                    # propagate msg upstream
-                    for v in inneighbors(graph, to)
-                        newe = (from=to, to=v, msg=newmsg)
-                        enqueue!(state.events, newe)
+            if !any(isempty, buffer[id])
+                newmsg = nothing
+                for inds in Iterators.product(eachindex.(buffer[id])...)
+                    allmsgs = [b[ind] for (b, ind) in zip(buffer[id], inds)]
+                    newmsg = outmsg(currnode, convert(Vector{V}, allmsgs))
+                    if !isnothing(newmsg)
+                        for (b, ind) in zip(buffer[id], inds)
+                            deleteat!(b, ind)
+                        end
+                        if isempty(inneighbors(graph, to))
+                            # we found a match!
+                            enqueue!(state.matches, newmsg)
+                        else
+                            # propagate msg upstream
+                            for v in inneighbors(graph, to)
+                                newe = (from=to, to=v, msg=newmsg)
+                                enqueue!(state.events, newe)
+                            end
+                        end
+                        break
                     end
                 end
-
-                delete!(buffer, id)
             end
         end
     end

@@ -13,6 +13,7 @@ inmsg(::AbstractSieveNode, msg, ::AbstractSieveNode) = [msg]
     outmsg(node, msgs, from)
 
 Merge a full set of messages `msgs` from inputs into a single output message.
+May return nothing if no message should be sent.
 """
 function outmsg(::AbstractSieveNode, msgs::Vector)
     length(msgs) == 1 || error("Not implemented: outmsg")
